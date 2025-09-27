@@ -7,17 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  BookOpen, 
-  Clock, 
-  Trophy, 
-  Target,
-  ExternalLink,
-  Play,
-  CheckCircle,
-  Calendar,
-  TrendingUp
-} from 'lucide-react';
+import { BookOpen, Clock, Trophy, Target, ExternalLink, Play, CircleCheck as CheckCircle, Calendar, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { getUserEnrollments, CourseEnrollment } from '@/lib/user-data';
 
