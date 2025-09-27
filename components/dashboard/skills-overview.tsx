@@ -104,9 +104,37 @@ function getProficiencyColor(proficiency: number) {
   return 'bg-red-500';
 }
 
-export function SkillsOverview() {
+interface SkillsOverviewProps {
+  analysis?: any; // ResumeAnalysis type
+}
+
+export function SkillsOverview({ analysis }: SkillsOverviewProps) {
+  // Use analysis data if available, otherwise show empty state
+  const skills = analysis?.skills || [];
   const strengths = skills.filter(skill => skill.isStrength);
   const gaps = skills.filter(skill => skill.isGap);
+  
+  if (skills.length === 0) {
+    return (
+      <Card className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600">
+        <CardContent className="py-16">
+          <div className="text-center space-y-6">
+            <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-600/20 rounded-full flex items-center justify-center">
+              <Target className="h-8 w-8 text-blue-600" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                No Skills Analysis Yet
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto">
+                Upload your resume to get AI-powered skill analysis
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">

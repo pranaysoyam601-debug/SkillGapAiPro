@@ -63,16 +63,6 @@ export function DashboardHeader() {
             </nav>
           </div>
 
-          {/* Welcome Message */}
-          <div className="hidden lg:flex flex-col items-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Welcome back, Alex!
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-300">
-              Ready to advance your career today?
-            </p>
-          </div>
-
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             <Link href="/analyze">

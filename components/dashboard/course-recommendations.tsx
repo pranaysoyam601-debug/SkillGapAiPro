@@ -64,7 +64,47 @@ function getLevelColor(level: string) {
   }
 }
 
-export function CourseRecommendations() {
+interface CourseRecommendationsProps {
+  analysis?: any; // ResumeAnalysis type
+}
+
+export function CourseRecommendations({ analysis }: CourseRecommendationsProps) {
+  // Use analysis recommendations if available
+  const recommendations = analysis?.recommendations || [];
+  
+  if (recommendations.length === 0) {
+    return (
+      <Card className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <BookOpen className="h-5 w-5 text-purple-600" />
+            <span>Course Recommendations</span>
+          </CardTitle>
+          <CardDescription>
+            Personalized matches for your skill gaps
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="py-12">
+          <div className="text-center space-y-4">
+            <div className="mx-auto w-12 h-12 bg-purple-100 dark:bg-purple-600/20 rounded-full flex items-center justify-center">
+              <BookOpen className="h-6 w-6 text-purple-600" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white">
+                No Recommendations Yet
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Upload your resume to get personalized course recommendations
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  // Use real data from analysis
+  const coursesToShow = recommendations.slice(0, 3);
   return (
     <Card className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600">
       <CardHeader>
@@ -86,10 +126,11 @@ export function CourseRecommendations() {
       </CardHeader>
       <CardContent className="space-y-6">
         {courses.map((course, index) => (
+        {coursesToShow.map((course, index) => (
           <div key={index} className="p-4 bg-gradient-to-r from-gray-50/50 to-purple-50/50 dark:from-gray-800/80 dark:to-purple-900/30 rounded-lg border border-gray-200/50 dark:border-gray-600 hover:shadow-md transition-shadow">
             <div className="flex items-start space-x-4">
               <img 
-                src={course.image} 
+                src={course.image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=400'} 
                 alt={course.title}
                 className="w-16 h-16 rounded-lg object-cover"
               />
@@ -136,13 +177,19 @@ export function CourseRecommendations() {
                     </span>
                   </div>
                   <Button size="sm" variant="outline" className="text-xs">
-                    <ExternalLink className="h-3 w-3 mr-1" />
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-xs"
+                    onClick={() => window.open(course.url, '_blank')}
+                  >
+                    <ExternalLink className="h-3 w-3 mr-1" />                    
                     View Course
                   </Button>
                 </div>
 
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {course.skillsAddressed.slice(0, 3).map((skill, skillIndex) => (
+                  {(course.skillsAddressed || []).slice(0, 3).map((skill, skillIndex) => (
                     <Badge key={skillIndex} variant="outline" className="text-xs">
                       {skill}
                     </Badge>

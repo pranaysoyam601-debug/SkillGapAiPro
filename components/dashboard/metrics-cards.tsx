@@ -72,10 +72,56 @@ function getTrendColor(direction: string) {
   }
 }
 
-export function MetricsCards() {
+interface MetricsCardsProps {
+  hasResumeData?: boolean;
+  analysis?: any;
+}
+
+export function MetricsCards({ hasResumeData = false, analysis }: MetricsCardsProps) {
+  // Update metrics based on real data
+  const updatedMetrics = metrics.map(metric => {
+    if (!hasResumeData) {
+      return {
+        ...metric,
+        value: metric.title === 'Course Recommendations' ? '0' : '0',
+        description: 'Upload resume to see data',
+        progress: 0,
+        trend: { ...metric.trend, label: 'No data yet' }
+      };
+    }
+    
+    // Use real analysis data when available
+    if (analysis) {
+      switch (metric.title) {
+        case 'Skills Identified':
+          return {
+            ...metric,
+            value: analysis.skills?.length.toString() || '0',
+            progress: 100,
+          };
+        case 'Skill Gap':
+          return {
+            ...metric,
+            value: analysis.gaps?.length.toString() || '0',
+            progress: Math.max(0, 100 - (analysis.gaps?.length || 0) * 10),
+          };
+        case 'Course Recommendations':
+          return {
+            ...metric,
+            value: analysis.recommendations?.length.toString() || '0',
+            progress: 90,
+          };
+        default:
+          return metric;
+      }
+    }
+    
+    return metric;
+  });
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      {metrics.map((metric, index) => {
+      {updatedMetrics.map((metric, index) => {
         const Icon = metric.icon;
         const TrendIcon = getTrendIcon(metric.trend.direction);
         
