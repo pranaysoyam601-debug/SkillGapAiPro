@@ -242,3 +242,5 @@ export function CourseRecommendations({ analysis }: CourseRecommendationsProps) 
     </Card>
   );
 }
+  )
+}
