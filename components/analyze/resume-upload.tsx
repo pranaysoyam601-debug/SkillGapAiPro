@@ -7,6 +7,9 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Upload, File, FileText, CircleCheck as CheckCircle, CircleAlert as AlertCircle, X, Loader as Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/lib/auth-context';
+import { updateUserProfile } from '@/lib/user-data';
+import { processResumeWithML } from '@/lib/ml-integration';
 
 interface UploadedFile {
   name: string;
@@ -19,6 +22,7 @@ interface UploadedFile {
 export function ResumeUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<UploadedFile[]>([]);
+  const { user } = useAuth();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -78,22 +82,53 @@ export function ResumeUpload() {
 
       if (progress >= 100) {
         clearInterval(interval);
-        // Simulate processing
+        // Start ML processing
         setTimeout(() => {
           setFiles(prev => prev.map(f => 
             f.name === file.name ? { ...f, status: 'processing' } : f
           ));
           
-          // Simulate completion
-          setTimeout(() => {
-            setFiles(prev => prev.map(f => 
-              f.name === file.name ? { ...f, status: 'completed' } : f
-            ));
-            toast.success(`${file.name} analyzed successfully!`);
-          }, 3000);
+          // Process with ML model
+          processMLAnalysis(file);
         }, 1000);
       }
     }, 500);
+  };
+
+  const processMLAnalysis = async (file: UploadedFile) => {
+    if (!user) return;
+    
+    try {
+      // In production, you would extract text from the file here
+      const fileContent = "Mock resume content"; // Replace with actual file text extraction
+      
+      // Process with ML model
+      await processResumeWithML(user.uid, file.name, fileContent);
+      
+      // Update completion status
+      setTimeout(() => {
+            setFiles(prev => prev.map(f => 
+              f.name === file.name ? { ...f, status: 'completed' } : f
+            ));
+            
+            // Update user profile to mark resume as uploaded
+              updateUserProfile(user.uid, { hasUploadedResume: true });
+            
+        toast.success(`${file.name} analyzed successfully! View your results in the dashboard.`);
+        
+        // Refresh page to show new data
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('ML processing failed:', error);
+      setFiles(prev => prev.map(f => 
+        f.name === file.name ? { ...f, status: 'error' } : f
+      ));
+      toast.error(`Failed to analyze ${file.name}. Please try again.`);
+    }
   };
 
   const formatFileSize = (bytes: number): string => {

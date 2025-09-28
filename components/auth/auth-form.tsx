@@ -8,6 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Mail, Lock, User, Loader as Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { createUserProfile } from '@/lib/user-data';
 
 export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,12 +19,35 @@ export function AuthForm() {
   const handleAuth = async (type: 'signin' | 'signup', formData: FormData) => {
     setIsLoading(true);
     
-    // Simulate authentication
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const name = formData.get('name') as string;
     
-    toast.success(`Successfully ${type === 'signin' ? 'signed in' : 'signed up'}!`);
-    setIsLoading(false);
-    router.push('/dashboard');
+    try {
+      if (type === 'signup') {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Create user profile in Firestore
+        await createUserProfile({
+          uid: userCredential.user.uid,
+          name: name || 'User',
+          email: email,
+          hasUploadedResume: false,
+        });
+        
+        toast.success('Account created successfully!');
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+        toast.success('Successfully signed in!');
+      }
+      
+      router.push('/dashboard');
+    } catch (error: any) {
+      console.error('Authentication error:', error);
+      toast.error(error.message || 'Authentication failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

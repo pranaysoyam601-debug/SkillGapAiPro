@@ -83,7 +83,7 @@ export function MetricsCards({ hasResumeData = false, analysis }: MetricsCardsPr
     if (!hasResumeData) {
       return {
         ...metric,
-        value: metric.title === 'Course Recommendations' ? '0' : '0',
+        value: '0',
         description: 'Upload resume to see data',
         progress: 0,
         trend: { ...metric.trend, label: 'No data yet' }

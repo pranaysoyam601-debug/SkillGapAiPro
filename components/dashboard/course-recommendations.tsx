@@ -12,6 +12,9 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { trackCourseEnrollment } from '@/lib/course-enrollment';
+import { toast } from 'sonner';
 
 const courses = [
   {
@@ -69,6 +72,31 @@ interface CourseRecommendationsProps {
 }
 
 export function CourseRecommendations({ analysis }: CourseRecommendationsProps) {
+  const { user } = useAuth();
+  
+  const handleEnrollment = async (course: any) => {
+    if (!user) {
+      toast.error('Please sign in to enroll in courses');
+      return;
+    }
+    
+    try {
+      await trackCourseEnrollment(
+        user.uid,
+        course.id?.toString() || course.title,
+        course.title,
+        course.provider,
+        course.url || `https://www.${course.provider.toLowerCase()}.com`
+      );
+      
+      window.open(course.url || `https://www.${course.provider.toLowerCase()}.com`, '_blank');
+      toast.success(`Enrolled in ${course.title}! Opening course page...`);
+    } catch (error) {
+      console.error('Enrollment error:', error);
+      toast.error('Failed to track enrollment');
+    }
+  };
+  
   // Use analysis recommendations if available
   const recommendations = analysis?.recommendations || [];
   
@@ -181,10 +209,10 @@ export function CourseRecommendations({ analysis }: CourseRecommendationsProps) 
                     size="sm" 
                     variant="outline" 
                     className="text-xs"
-                    onClick={() => window.open(course.url, '_blank')}
+                    onClick={() => handleEnrollment(course)}
                   >
                     <ExternalLink className="h-3 w-3 mr-1" />                    
-                    View Course
+                    Enroll Now
                   </Button>
                 </div>
 

@@ -15,6 +15,9 @@ import {
   Award,
   TrendingUp
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { trackCourseEnrollment, isUserEnrolled } from '@/lib/course-enrollment';
+import { toast } from 'sonner';
 
 const courses = [
   {
@@ -156,6 +159,34 @@ function getLevelColor(level: string) {
 }
 
 export function CourseGrid() {
+  const { user } = useAuth();
+  
+  const handleEnrollment = async (course: any) => {
+    if (!user) {
+      toast.error('Please sign in to enroll in courses');
+      return;
+    }
+    
+    try {
+      // Track enrollment in Firebase
+      await trackCourseEnrollment(
+        user.uid,
+        course.id.toString(),
+        course.title,
+        course.provider,
+        `https://www.${course.provider.toLowerCase()}.com/course/${course.id}`
+      );
+      
+      // Open external course page
+      window.open(`https://www.${course.provider.toLowerCase()}.com/course/${course.id}`, '_blank');
+      
+      toast.success(`Enrolled in ${course.title}! Opening course page...`);
+    } catch (error) {
+      console.error('Enrollment error:', error);
+      toast.error('Failed to track enrollment');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -298,7 +329,8 @@ export function CourseGrid() {
                     <Play className="h-3 w-3 ml-1" />
                   </Button>
                   <Button size="sm" onClick={() => window.open(`https://coursera.org/course/${course.id}`, '_blank')}>
-                    Enroll Now
+                  <Button size="sm" onClick={() => handleEnrollment(course)}>
+                    {course.free ? 'Start Learning' : 'Enroll Now'}
                     <ExternalLink className="h-3 w-3 ml-1" />
                   </Button>
                 </div>

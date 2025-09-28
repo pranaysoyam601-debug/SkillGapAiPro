@@ -11,6 +11,7 @@ import { CourseRecommendations } from './course-recommendations';
 import { MetricsCards } from './metrics-cards';
 import { MarketTrends } from './market-trends';
 import { RecentActivity } from './recent-activity';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import Link from 'next/link';
 
 interface ConditionalContentProps {
@@ -30,18 +31,41 @@ function EmptyState() {
               </div>
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  No Skills Analysis Yet
+                  Upload Your Resume to Get Started
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto">
-                  Upload your resume to get AI-powered skill analysis and identify areas for improvement
+                  Get AI-powered skill analysis, identify gaps, and receive personalized course recommendations
                 </p>
               </div>
               <Link href="/analyze">
                 <Button size="lg">
                   <Upload className="h-4 w-4 mr-2" />
-                  Upload Resume to Get Started
+                  Upload Resume Now
                 </Button>
               </Link>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 max-w-2xl mx-auto">
+                <div className="text-center p-4">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-600/20 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                    <Target className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-1">Skill Analysis</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">AI extracts and evaluates your skills</p>
+                </div>
+                <div className="text-center p-4">
+                  <div className="w-12 h-12 bg-orange-100 dark:bg-orange-600/20 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                    <TrendingUp className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-1">Gap Identification</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Identify high-priority skill gaps</p>
+                </div>
+                <div className="text-center p-4">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-600/20 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                    <BookOpen className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-1">Course Matching</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Get personalized recommendations</p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -175,7 +199,7 @@ export function ConditionalContent({ hasUploadedResume }: ConditionalContentProp
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <LoadingSpinner size="lg" className="mx-auto" />
         <p className="text-gray-600 dark:text-gray-300 mt-4">Loading your data...</p>
       </div>
     );
