@@ -153,7 +153,6 @@ export function CourseRecommendations({ analysis }: CourseRecommendationsProps) 
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {courses.map((course, index) => (
         {coursesToShow.map((course, index) => (
           <div key={index} className="p-4 bg-gradient-to-r from-gray-50/50 to-purple-50/50 dark:from-gray-800/80 dark:to-purple-900/30 rounded-lg border border-gray-200/50 dark:border-gray-600 hover:shadow-md transition-shadow">
             <div className="flex items-start space-x-4">
@@ -204,7 +203,6 @@ export function CourseRecommendations({ analysis }: CourseRecommendationsProps) 
                       {course.price}
                     </span>
                   </div>
-                  <Button size="sm" variant="outline" className="text-xs">
                   <Button 
                     size="sm" 
                     variant="outline" 
@@ -233,14 +231,6 @@ export function CourseRecommendations({ analysis }: CourseRecommendationsProps) 
           <ChevronRight className="h-4 w-4 ml-1" />
         </Button>
       </CardContent>
-        )
-        )
-        }
-    )
-    )
-    }
     </Card>
   );
-}
-  )
 }
