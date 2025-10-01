@@ -19,6 +19,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Handle case where Firebase auth is not initialized
+    if (!auth) {
+      console.warn('Firebase Auth not initialized. Running in demo mode.');
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);

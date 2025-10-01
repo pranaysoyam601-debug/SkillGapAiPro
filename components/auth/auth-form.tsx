@@ -23,6 +23,13 @@ export function AuthForm() {
     const password = formData.get('password') as string;
     const name = formData.get('name') as string;
     
+    // Check if Firebase is initialized
+    if (!auth) {
+      toast.error('Authentication service is not available. Please check your configuration.');
+      setIsLoading(false);
+      return;
+    }
+    
     try {
       if (type === 'signup') {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);

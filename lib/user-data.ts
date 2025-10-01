@@ -68,6 +68,11 @@ export interface CourseEnrollment {
 
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   try {
+    if (!db) {
+      console.warn('Firestore not initialized. Running in demo mode.');
+      return null;
+    }
+    
     const docRef = doc(db, 'users', uid);
     const docSnap = await getDoc(docRef);
     
@@ -83,6 +88,11 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 
 export async function createUserProfile(profile: Omit<UserProfile, 'createdAt' | 'updatedAt'>): Promise<void> {
   try {
+    if (!db) {
+      console.warn('Firestore not initialized. Cannot create user profile.');
+      return;
+    }
+    
     const docRef = doc(db, 'users', profile.uid);
     await setDoc(docRef, {
       ...profile,
@@ -97,6 +107,11 @@ export async function createUserProfile(profile: Omit<UserProfile, 'createdAt' |
 
 export async function updateUserProfile(uid: string, updates: Partial<UserProfile>): Promise<void> {
   try {
+    if (!db) {
+      console.warn('Firestore not initialized. Cannot update user profile.');
+      return;
+    }
+    
     const docRef = doc(db, 'users', uid);
     await updateDoc(docRef, {
       ...updates,
@@ -110,6 +125,11 @@ export async function updateUserProfile(uid: string, updates: Partial<UserProfil
 
 export async function getLatestResumeAnalysis(userId: string): Promise<ResumeAnalysis | null> {
   try {
+    if (!db) {
+      console.warn('Firestore not initialized. Cannot fetch resume analysis.');
+      return null;
+    }
+    
     const q = query(
       collection(db, 'analyses'),
       where('userId', '==', userId)
@@ -135,6 +155,11 @@ export async function getLatestResumeAnalysis(userId: string): Promise<ResumeAna
 
 export async function getUserEnrollments(userId: string): Promise<CourseEnrollment[]> {
   try {
+    if (!db) {
+      console.warn('Firestore not initialized. Cannot fetch enrollments.');
+      return [];
+    }
+    
     const q = query(
       collection(db, 'enrollments'),
       where('userId', '==', userId)
